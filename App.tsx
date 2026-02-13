@@ -1,15 +1,15 @@
 
-import React, { useState, useEffect } from 'react';
-import { Project, NewsItem, SiteSettings, AppState } from './types';
-import { INITIAL_PROJECTS, INITIAL_NEWS, INITIAL_SETTINGS } from './constants';
-import Navbar from './components/Navbar';
-import Footer from './components/Footer';
-import Home from './pages/Home';
-import About from './pages/About';
-import Portfolio from './pages/Portfolio';
-import News from './pages/News';
-import Contact from './pages/Contact';
-import AdminDashboard from './components/AdminDashboard';
+import React, { useState } from 'react';
+import { Project, NewsItem, SiteSettings } from './types.ts';
+import { INITIAL_PROJECTS, INITIAL_NEWS, INITIAL_SETTINGS } from './constants.tsx';
+import Navbar from './components/Navbar.tsx';
+import Footer from './components/Footer.tsx';
+import Home from './pages/Home.tsx';
+import About from './pages/About.tsx';
+import Portfolio from './pages/Portfolio.tsx';
+import News from './pages/News.tsx';
+import Contact from './pages/Contact.tsx';
+import AdminDashboard from './components/AdminDashboard.tsx';
 
 const App: React.FC = () => {
   const [currentPage, setCurrentPage] = useState<string>('home');

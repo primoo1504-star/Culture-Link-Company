@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { SiteSettings } from '../types';
+import { SiteSettings } from '../types.ts';
 
 interface FooterProps {
   settings: SiteSettings;

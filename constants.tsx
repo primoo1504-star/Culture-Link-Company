@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Project, NewsItem, SiteSettings } from './types';
+import { Project, NewsItem, SiteSettings } from './types.ts';
 
 export const INITIAL_SETTINGS: SiteSettings = {
   companyName: "문화이음컴퍼니",

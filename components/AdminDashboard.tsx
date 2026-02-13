@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Project, NewsItem, SiteSettings } from '../types';
+import { Project, NewsItem, SiteSettings } from '../types.ts';
 
 interface AdminDashboardProps {
   projects: Project[];
