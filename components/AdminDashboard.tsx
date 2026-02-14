@@ -17,6 +17,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
 }) => {
   const [activeTab, setActiveTab] = useState<'settings' | 'projects' | 'news'>('settings');
   const [editingProject, setEditingProject] = useState<Project | null>(null);
+  const [editingNews, setEditingNews] = useState<NewsItem | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleSettingChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -25,35 +26,20 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
   };
 
   /**
-   * [삭제 기능] 프로젝트 삭제 (휴지통 버튼)
-   * 인라인 핸들러에서 호출되며, 이벤트 전파를 막고 삭제를 수행합니다.
+   * 프로젝트 관리 로직
    */
   const deleteProject = (e: React.MouseEvent, id: string) => {
-    // 1. 이벤트 전파 방지: 부모 요소나 다른 버튼으로 클릭이 전달되지 않게 함
     e.stopPropagation();
     e.preventDefault();
-
-    // 2. 삭제 확인창 띄우기
     if (window.confirm('정말 이 프로젝트를 삭제하시겠습니까?')) {
       setProjects(prev => prev.filter(p => p.id !== id));
-      
-      // 현재 편집 중인 프로젝트가 삭제된 것이라면 편집 모드 종료
-      if (editingProject?.id === id) {
-        setEditingProject(null);
-      }
+      if (editingProject?.id === id) setEditingProject(null);
     }
   };
 
-  /**
-   * [편집 기능] 프로젝트 편집 시작 (연필 버튼)
-   * 클릭 시 해당 프로젝트 정보를 상태에 담아 편집 폼을 띄웁니다.
-   */
   const editProject = (e: React.MouseEvent, project: Project) => {
-    // 1. 이벤트 전파 방지
     e.stopPropagation();
     e.preventDefault();
-
-    // 2. 편집 모드 활성화 (프로젝트 데이터 복사)
     setEditingProject({ ...project });
   };
 
@@ -64,7 +50,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
       category: "카테고리",
       date: new Date().toISOString().split('T')[0].slice(0, 7).replace('-', '.'),
       image: "https://picsum.photos/800/600?random=" + Math.random(),
-      description: "간략한 설명을 입력하세요."
+      description: ""
     };
     setProjects(prev => [newProj, ...prev]);
     setEditingProject(newProj);
@@ -73,50 +59,75 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
   const handleUpdateProject = (e: React.FormEvent) => {
     e.preventDefault();
     if (!editingProject) return;
-
     setProjects(prev => prev.map(p => p.id === editingProject.id ? editingProject : p));
     setEditingProject(null);
-    alert('저장되었습니다.');
-  };
-
-  const handleProjectFieldChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    if (!editingProject) return;
-    const { name, value } = e.target;
-    setEditingProject({ ...editingProject, [name]: value });
+    alert('프로젝트가 저장되었습니다.');
   };
 
   /**
-   * 이미지 업로드 기능 (Base64)
+   * 공지사항 관리 로직
    */
+  const handleEditNewsStart = (e: React.MouseEvent, item: NewsItem) => {
+    e.stopPropagation();
+    setEditingNews({ ...item });
+  };
+
+  const deleteNews = (e: React.MouseEvent, id: string) => {
+    e.stopPropagation();
+    if (window.confirm('이 공지사항을 삭제하시겠습니까?')) {
+      setNews(prev => prev.filter(n => n.id !== id));
+      if (editingNews?.id === id) setEditingNews(null);
+    }
+  };
+
+  const startAddNews = () => {
+    const newItem: NewsItem = {
+      id: Date.now().toString(),
+      title: "",
+      date: new Date().toISOString().split('T')[0],
+      content: "",
+      isImportant: false
+    };
+    setEditingNews(newItem);
+  };
+
+  const handleNewsSave = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingNews) return;
+
+    const exists = news.find(n => n.id === editingNews.id);
+    if (exists) {
+      setNews(prev => prev.map(n => n.id === editingNews.id ? editingNews : n));
+    } else {
+      setNews(prev => [editingNews, ...prev]);
+    }
+    setEditingNews(null);
+    alert('공지사항이 저장되었습니다.');
+  };
+
+  const handleNewsFieldChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    if (!editingNews) return;
+    const { name, value, type } = e.target;
+    
+    if (type === 'checkbox') {
+      const checked = (e.target as HTMLInputElement).checked;
+      setEditingNews({ ...editingNews, [name]: checked });
+    } else if (name === 'isImportant') {
+      setEditingNews({ ...editingNews, isImportant: value === 'true' });
+    } else {
+      setEditingNews({ ...editingNews, [name]: value });
+    }
+  };
+
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file && editingProject) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setEditingProject({
-          ...editingProject,
-          image: reader.result as string
-        });
+        setEditingProject({ ...editingProject, image: reader.result as string });
       };
       reader.readAsDataURL(file);
     }
-  };
-
-  const deleteNews = (id: string) => {
-    if (window.confirm('공지사항을 삭제하시겠습니까?')) {
-      setNews(prev => prev.filter(n => n.id !== id));
-    }
-  };
-
-  const addNews = () => {
-    const newItem: NewsItem = {
-      id: Date.now().toString(),
-      title: "새 공지사항",
-      date: new Date().toISOString().split('T')[0],
-      content: "내용을 입력하세요.",
-      isImportant: false
-    };
-    setNews(prev => [newItem, ...prev]);
   };
 
   return (
@@ -151,6 +162,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
               onClick={() => {
                 setActiveTab(tab.id as any);
                 setEditingProject(null);
+                setEditingNews(null);
               }}
               className={`w-full flex items-center gap-3 px-5 py-4 rounded-2xl font-bold transition-all ${
                 activeTab === tab.id ? 'bg-purple-600 text-white shadow-xl shadow-purple-200' : 'text-gray-500 hover:bg-gray-200'
@@ -216,24 +228,12 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
                             <p className="text-sm font-bold text-gray-400 uppercase tracking-wider">{p.category} | {p.date}</p>
                           </div>
                           <div className="flex gap-2">
-                            {/* 편집 버튼: editProject 함수를 독립적으로 호출 */}
-                            <button 
-                              type="button"
-                              onClick={(e) => editProject(e, p)}
-                              className="p-4 text-gray-400 hover:text-purple-600 transition-all bg-white rounded-2xl shadow-sm border border-gray-100 hover:border-purple-200"
-                              title="수정"
-                            >
+                            <button type="button" onClick={(e) => editProject(e, p)} className="p-4 text-gray-400 hover:text-purple-600 transition-all bg-white rounded-2xl shadow-sm border border-gray-100 hover:border-purple-200" title="수정">
                               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                               </svg>
                             </button>
-                            {/* 삭제 버튼: deleteProject 함수를 독립적으로 호출 */}
-                            <button 
-                              type="button"
-                              onClick={(e) => deleteProject(e, p.id)} 
-                              className="p-4 text-gray-400 hover:text-red-600 transition-all bg-white rounded-2xl shadow-sm border border-gray-100 hover:border-red-200"
-                              title="삭제"
-                            >
+                            <button type="button" onClick={(e) => deleteProject(e, p.id)} className="p-4 text-gray-400 hover:text-red-600 transition-all bg-white rounded-2xl shadow-sm border border-gray-100 hover:border-red-200" title="삭제">
                               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                               </svg>
@@ -247,55 +247,39 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
               ) : (
                 <div className="animate-in slide-in-from-bottom-4">
                   <div className="flex items-center gap-4 mb-10">
-                    <button 
-                      type="button"
-                      onClick={() => setEditingProject(null)}
-                      className="p-3 hover:bg-gray-100 rounded-2xl transition-all"
-                    >
+                    <button type="button" onClick={() => setEditingProject(null)} className="p-3 hover:bg-gray-100 rounded-2xl transition-all">
                       <svg className="w-6 h-6 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                       </svg>
                     </button>
                     <h2 className="text-3xl font-black tracking-tight">프로젝트 정보 수정</h2>
                   </div>
-
                   <form onSubmit={handleUpdateProject} className="space-y-8">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                       <div className="space-y-6">
                         <div>
                           <label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-3">프로젝트 제목</label>
-                          <input name="title" value={editingProject.title} onChange={handleProjectFieldChange} className="w-full px-5 py-4 bg-gray-50 rounded-2xl focus:ring-2 focus:ring-purple-500 outline-none transition-all font-bold" required />
+                          <input name="title" value={editingProject.title} onChange={(e) => setEditingProject({...editingProject, title: e.target.value})} className="w-full px-5 py-4 bg-gray-50 rounded-2xl focus:ring-2 focus:ring-purple-500 outline-none transition-all font-bold" required />
                         </div>
                         <div>
                           <label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-3">카테고리</label>
-                          <input name="category" value={editingProject.category} onChange={handleProjectFieldChange} className="w-full px-5 py-4 bg-gray-50 rounded-2xl focus:ring-2 focus:ring-purple-500 outline-none transition-all font-bold" required />
+                          <input name="category" value={editingProject.category} onChange={(e) => setEditingProject({...editingProject, category: e.target.value})} className="w-full px-5 py-4 bg-gray-50 rounded-2xl focus:ring-2 focus:ring-purple-500 outline-none transition-all font-bold" required />
                         </div>
                         <div>
                           <label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-3">일자 (예: 2024.10)</label>
-                          <input name="date" value={editingProject.date} onChange={handleProjectFieldChange} className="w-full px-5 py-4 bg-gray-50 rounded-2xl focus:ring-2 focus:ring-purple-500 outline-none transition-all font-bold" />
+                          <input name="date" value={editingProject.date} onChange={(e) => setEditingProject({...editingProject, date: e.target.value})} className="w-full px-5 py-4 bg-gray-50 rounded-2xl focus:ring-2 focus:ring-purple-500 outline-none transition-all font-bold" />
                         </div>
                       </div>
                       <div className="space-y-6">
                         <div>
                           <label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-3">메인 이미지</label>
                           <div className="flex gap-3 mb-4">
-                             <input name="image" value={editingProject.image} onChange={handleProjectFieldChange} className="flex-grow px-5 py-3 text-sm bg-gray-50 rounded-xl focus:ring-2 focus:ring-purple-500 outline-none font-medium" placeholder="이미지 URL을 입력하거나 파일을 선택하세요" />
+                            <input name="image" value={editingProject.image} onChange={(e) => setEditingProject({...editingProject, image: e.target.value})} className="flex-grow px-5 py-3 text-sm bg-gray-50 rounded-xl focus:ring-2 focus:ring-purple-500 outline-none font-medium" />
                             <button type="button" onClick={() => fileInputRef.current?.click()} className="px-6 py-3 bg-purple-600 text-white text-sm font-black rounded-xl hover:bg-purple-700 transition-all shadow-lg whitespace-nowrap">파일 업로드</button>
                             <input type="file" ref={fileInputRef} onChange={handleImageUpload} className="hidden" accept="image/*" />
                           </div>
-                          <div className="aspect-video w-full rounded-3xl overflow-hidden bg-gray-50 border-2 border-dashed border-gray-200 flex items-center justify-center">
-                            {editingProject.image ? (
-                              <img src={editingProject.image} alt="Preview" className="w-full h-full object-cover" />
-                            ) : (
-                              <span className="text-gray-300 font-bold">미리보기 이미지가 없습니다</span>
-                            )}
-                          </div>
                         </div>
                       </div>
-                    </div>
-                    <div>
-                      <label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-3">상세 설명</label>
-                      <textarea name="description" rows={5} value={editingProject.description} onChange={handleProjectFieldChange} className="w-full px-5 py-4 bg-gray-50 rounded-2xl focus:ring-2 focus:ring-purple-500 outline-none transition-all font-bold resize-none" placeholder="설명을 입력하세요" />
                     </div>
                     <div className="flex justify-end gap-4 pt-6">
                       <button type="button" onClick={() => setEditingProject(null)} className="px-8 py-4 bg-gray-100 text-gray-500 font-black rounded-2xl hover:bg-gray-200 transition-all">취소하기</button>
@@ -309,38 +293,138 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
           {activeTab === 'news' && (
             <div className="animate-in fade-in slide-in-from-right-4">
-              <div className="flex justify-between items-center mb-10">
-                <h2 className="text-3xl font-black tracking-tight">공지사항 관리</h2>
-                <button onClick={addNews} className="px-6 py-3 bg-purple-50 text-purple-600 font-black rounded-xl hover:bg-purple-100 transition-all">+ 새 공지사항 추가</button>
-              </div>
-              <div className="overflow-x-auto rounded-3xl border border-gray-100 overflow-hidden">
-                <table className="w-full text-left">
-                  <thead>
-                    <tr className="bg-gray-50 text-gray-400 text-[10px] font-black uppercase tracking-[0.2em] border-b border-gray-100">
-                      <th className="px-6 py-5">구분</th>
-                      <th className="px-6 py-5">제목</th>
-                      <th className="px-6 py-5">게시일</th>
-                      <th className="px-6 py-5 text-right">관리</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-gray-50">
-                    {news.map(n => (
-                      <tr key={n.id} className="hover:bg-gray-50/50 transition-colors">
-                        <td className="px-6 py-5">
-                          <span className={`text-[10px] font-black px-3 py-1 rounded-full ${n.isImportant ? 'bg-purple-600 text-white' : 'bg-gray-200 text-gray-500'}`}>
-                            {n.isImportant ? 'IMPORTANT' : 'NORMAL'}
-                          </span>
-                        </td>
-                        <td className="px-6 py-5 font-bold text-gray-900">{n.title}</td>
-                        <td className="px-6 py-5 text-sm font-bold text-gray-400">{n.date}</td>
-                        <td className="px-6 py-5 text-right">
-                          <button type="button" onClick={() => deleteNews(n.id)} className="text-red-500 hover:text-red-700 transition-colors text-sm font-black underline decoration-dotted underline-offset-4">삭제</button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+              {!editingNews ? (
+                <>
+                  <div className="flex justify-between items-center mb-10">
+                    <h2 className="text-3xl font-black tracking-tight">공지사항 관리</h2>
+                    <button onClick={startAddNews} className="px-6 py-3 bg-purple-50 text-purple-600 font-black rounded-xl hover:bg-purple-100 transition-all">+ 새 공지사항 추가</button>
+                  </div>
+                  <div className="overflow-x-auto rounded-3xl border border-gray-100 overflow-hidden">
+                    <table className="w-full text-left">
+                      <thead>
+                        <tr className="bg-gray-50 text-gray-400 text-[10px] font-black uppercase tracking-[0.2em] border-b border-gray-100">
+                          <th className="px-6 py-5">구분</th>
+                          <th className="px-6 py-5">제목</th>
+                          <th className="px-6 py-5">게시일</th>
+                          <th className="px-6 py-5 text-right">관리</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-gray-50">
+                        {news.map(n => (
+                          <tr key={n.id} className="hover:bg-gray-50/50 transition-colors cursor-pointer group" onClick={(e) => handleEditNewsStart(e as any, n)}>
+                            <td className="px-6 py-5">
+                              <span className={`text-[10px] font-black px-3 py-1 rounded-full ${n.isImportant ? 'bg-purple-600 text-white' : 'bg-gray-200 text-gray-500'}`}>
+                                {n.isImportant ? 'IMPORTANT' : 'NORMAL'}
+                              </span>
+                            </td>
+                            <td className="px-6 py-5 font-bold text-gray-900 group-hover:text-purple-600 transition-colors">{n.title}</td>
+                            <td className="px-6 py-5 text-sm font-bold text-gray-400">{n.date}</td>
+                            <td className="px-6 py-5 text-right">
+                              <button type="button" onClick={(e) => deleteNews(e as any, n.id)} className="text-red-500 hover:text-red-700 transition-colors text-sm font-black underline decoration-dotted underline-offset-4">삭제</button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </>
+              ) : (
+                <div className="animate-in slide-in-from-bottom-4">
+                  <div className="flex items-center gap-4 mb-10">
+                    <button type="button" onClick={() => setEditingNews(null)} className="p-3 hover:bg-gray-100 rounded-2xl transition-all">
+                      <svg className="w-6 h-6 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                      </svg>
+                    </button>
+                    <h2 className="text-3xl font-black tracking-tight">{editingNews.id.length > 15 ? '새 공지사항 작성' : '공지사항 수정'}</h2>
+                  </div>
+
+                  <form onSubmit={handleNewsSave} className="space-y-8">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                      <div className="space-y-6">
+                        <div>
+                          <label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-3">제목</label>
+                          <input 
+                            name="title" 
+                            value={editingNews.title} 
+                            onChange={handleNewsFieldChange} 
+                            placeholder="공지사항 제목을 입력하세요"
+                            className="w-full px-5 py-4 bg-gray-50 rounded-2xl focus:ring-2 focus:ring-purple-500 outline-none transition-all font-bold" 
+                            required 
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-3">중요도 설정</label>
+                          <div className="flex gap-4">
+                            <label className="flex items-center gap-2 cursor-pointer">
+                              <input 
+                                type="radio" 
+                                name="isImportant" 
+                                value="false" 
+                                checked={!editingNews.isImportant} 
+                                onChange={handleNewsFieldChange}
+                                className="w-4 h-4 text-purple-600"
+                              />
+                              <span className="text-sm font-bold text-gray-600">일반 (NORMAL)</span>
+                            </label>
+                            <label className="flex items-center gap-2 cursor-pointer">
+                              <input 
+                                type="radio" 
+                                name="isImportant" 
+                                value="true" 
+                                checked={editingNews.isImportant} 
+                                onChange={handleNewsFieldChange}
+                                className="w-4 h-4 text-purple-600"
+                              />
+                              <span className="text-sm font-bold text-purple-600">중요 (IMPORTANT)</span>
+                            </label>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="space-y-6">
+                        <div>
+                          <label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-3">게시일</label>
+                          <input 
+                            type="date" 
+                            name="date" 
+                            value={editingNews.date} 
+                            onChange={handleNewsFieldChange} 
+                            className="w-full px-5 py-4 bg-gray-50 rounded-2xl focus:ring-2 focus:ring-purple-500 outline-none transition-all font-bold" 
+                            required 
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    <div>
+                      <label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-3">상세 내용</label>
+                      <textarea 
+                        name="content" 
+                        rows={10} 
+                        value={editingNews.content} 
+                        onChange={handleNewsFieldChange} 
+                        placeholder="공지사항의 상세 내용을 입력하세요"
+                        className="w-full px-5 py-4 bg-gray-50 rounded-2xl focus:ring-2 focus:ring-purple-500 outline-none transition-all font-bold resize-none" 
+                        required
+                      />
+                    </div>
+                    <div className="flex justify-end gap-4 pt-6">
+                      <button 
+                        type="button" 
+                        onClick={() => setEditingNews(null)} 
+                        className="px-8 py-4 bg-gray-100 text-gray-500 font-black rounded-2xl hover:bg-gray-200 transition-all"
+                      >
+                        취소하기
+                      </button>
+                      <button 
+                        type="submit" 
+                        className="px-10 py-4 bg-purple-600 text-white font-black rounded-2xl hover:bg-purple-700 transition-all shadow-xl shadow-purple-100"
+                      >
+                        공지사항 저장
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              )}
             </div>
           )}
         </div>
