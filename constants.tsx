@@ -4,6 +4,8 @@ import { Project, NewsItem, SiteSettings } from './types.ts';
 
 export const INITIAL_SETTINGS: SiteSettings = {
   companyName: "문화이음컴퍼니",
+  ceoName: "홍길동",
+  businessNumber: "123-45-67890",
   heroTitle: "예술로 사람을 잇고,\n문화로 세상을 채우다",
   heroSubtitle: "문화이음컴퍼니는 감각적인 기획과 진정성 있는 접근으로 새로운 문화예술 경험을 창조합니다.",
   aboutVision: "우리는 예술의 가치가 일상에 스며들 때 사회가 더욱 풍요로워진다고 믿습니다. 전통과 현대를 잇고, 아티스트와 대중을 잇는 가교 역할을 충실히 수행합니다.",
@@ -12,7 +14,14 @@ export const INITIAL_SETTINGS: SiteSettings = {
   contactPhone: "02-123-4567",
   address: "서울특별시 강남구 테헤란로 123, 아트타워 8층",
   footerDescription: "문화예술의 가치를 발견하고, 이를 현대적인 감각으로 이어주는 기획 전문가 그룹입니다.",
-  footerServices: "축제 기획, 전시 및 큐레이션, 공연 제작, 문화 컨설팅"
+  footerServices: "축제 기획, 전시 및 큐레이션, 공연 제작, 문화 컨설팅",
+  snsInstagram: "https://instagram.com",
+  snsYoutube: "https://youtube.com",
+  snsFacebook: "",
+  service1: "축제 기획",
+  service2: "전시 및 큐레이션",
+  service3: "공연 제작",
+  service4: "문화 컨설팅"
 };
 
 export const INITIAL_PROJECTS: Project[] = [

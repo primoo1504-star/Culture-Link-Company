@@ -29,11 +29,8 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
    * [프로젝트 관리]
    */
   const deleteProject = (e: React.MouseEvent, id: string) => {
-    // 1. 이벤트 전파 방지: 부모 요소나 다른 버튼으로 클릭이 전달되지 않게 함
     e.stopPropagation();
     e.preventDefault();
-
-    // 2. 삭제 확인창
     if (window.confirm('정말 이 프로젝트를 삭제하시겠습니까?')) {
       setProjects(prev => prev.filter(p => p.id !== id));
       if (editingProject?.id === id) setEditingProject(null);
@@ -41,11 +38,8 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
   };
 
   const editProject = (e: React.MouseEvent, project: Project) => {
-    // 1. 이벤트 전파 방지
     e.stopPropagation();
     e.preventDefault();
-
-    // 2. 편집 모드 활성화 (데이터 복사)
     setEditingProject({ ...project });
   };
 
@@ -187,28 +181,91 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
         {/* Main Content Area */}
         <div className="flex-grow bg-white rounded-[2.5rem] p-8 md:p-12 shadow-sm min-h-[600px]">
           {activeTab === 'settings' && (
-            <div className="space-y-8 animate-in fade-in slide-in-from-right-4">
-              <h2 className="text-3xl font-black tracking-tight mb-4">기본 정보 수정</h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
-                <div>
-                  <label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-3">회사명</label>
-                  <input name="companyName" value={settings.companyName} onChange={handleSettingChange} className="w-full px-5 py-4 bg-gray-50 rounded-2xl focus:ring-2 focus:ring-purple-500 outline-none transition-all font-bold" />
+            <div className="space-y-12 animate-in fade-in slide-in-from-right-4 pb-12">
+              <section>
+                <h2 className="text-3xl font-black tracking-tight mb-8">사이트 및 사업자 정보</h2>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                  <div>
+                    <label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-3">회사명</label>
+                    <input name="companyName" value={settings.companyName} onChange={handleSettingChange} className="w-full px-5 py-4 bg-gray-50 rounded-2xl focus:ring-2 focus:ring-purple-500 outline-none transition-all font-bold" />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-3">대표자명</label>
+                    <input name="ceoName" value={settings.ceoName} onChange={handleSettingChange} className="w-full px-5 py-4 bg-gray-50 rounded-2xl focus:ring-2 focus:ring-purple-500 outline-none transition-all font-bold" />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-3">사업자 등록 번호</label>
+                    <input name="businessNumber" value={settings.businessNumber} onChange={handleSettingChange} className="w-full px-5 py-4 bg-gray-50 rounded-2xl focus:ring-2 focus:ring-purple-500 outline-none transition-all font-bold" />
+                  </div>
                 </div>
-                <div>
-                  <label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-3">이메일</label>
-                  <input name="contactEmail" value={settings.contactEmail} onChange={handleSettingChange} className="w-full px-5 py-4 bg-gray-50 rounded-2xl focus:ring-2 focus:ring-purple-500 outline-none transition-all font-bold" />
+              </section>
+
+              <section>
+                <h2 className="text-3xl font-black tracking-tight mb-8">연락처 및 주소</h2>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                  <div>
+                    <label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-3">이메일</label>
+                    <input name="contactEmail" value={settings.contactEmail} onChange={handleSettingChange} className="w-full px-5 py-4 bg-gray-50 rounded-2xl focus:ring-2 focus:ring-purple-500 outline-none transition-all font-bold" />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-3">연락처</label>
+                    <input name="contactPhone" value={settings.contactPhone} onChange={handleSettingChange} className="w-full px-5 py-4 bg-gray-50 rounded-2xl focus:ring-2 focus:ring-purple-500 outline-none transition-all font-bold" />
+                  </div>
+                  <div className="sm:col-span-2">
+                    <label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-3">주소</label>
+                    <input name="address" value={settings.address} onChange={handleSettingChange} className="w-full px-5 py-4 bg-gray-50 rounded-2xl focus:ring-2 focus:ring-purple-500 outline-none transition-all font-bold" />
+                  </div>
                 </div>
-                <div>
-                  <label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-3">연락처</label>
-                  <input name="contactPhone" value={settings.contactPhone} onChange={handleSettingChange} className="w-full px-5 py-4 bg-gray-50 rounded-2xl focus:ring-2 focus:ring-purple-500 outline-none transition-all font-bold" />
+              </section>
+
+              <section>
+                <h2 className="text-3xl font-black tracking-tight mb-8">푸터 설정 및 SNS 링크</h2>
+                <div className="space-y-6">
+                  <div>
+                    <label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-3">푸터 회사 소개 (한 줄 설명)</label>
+                    <textarea name="footerDescription" value={settings.footerDescription} onChange={handleSettingChange} rows={3} className="w-full px-5 py-4 bg-gray-50 rounded-2xl focus:ring-2 focus:ring-purple-500 outline-none transition-all font-bold resize-none" />
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                    <div>
+                      <label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-3">Instagram URL</label>
+                      <input name="snsInstagram" value={settings.snsInstagram} onChange={handleSettingChange} placeholder="https://" className="w-full px-5 py-4 bg-gray-50 rounded-2xl focus:ring-2 focus:ring-purple-500 outline-none transition-all font-bold" />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-3">Youtube URL</label>
+                      <input name="snsYoutube" value={settings.snsYoutube} onChange={handleSettingChange} placeholder="https://" className="w-full px-5 py-4 bg-gray-50 rounded-2xl focus:ring-2 focus:ring-purple-500 outline-none transition-all font-bold" />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-3">Facebook URL</label>
+                      <input name="snsFacebook" value={settings.snsFacebook} onChange={handleSettingChange} placeholder="https://" className="w-full px-5 py-4 bg-gray-50 rounded-2xl focus:ring-2 focus:ring-purple-500 outline-none transition-all font-bold" />
+                    </div>
+                  </div>
                 </div>
-                <div>
-                  <label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-3">주소</label>
-                  <input name="address" value={settings.address} onChange={handleSettingChange} className="w-full px-5 py-4 bg-gray-50 rounded-2xl focus:ring-2 focus:ring-purple-500 outline-none transition-all font-bold" />
+              </section>
+
+              <section>
+                <h2 className="text-3xl font-black tracking-tight mb-8">서비스 항목 관리 (푸터 표시)</h2>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                  <div>
+                    <label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-3">서비스 1</label>
+                    <input name="service1" value={settings.service1} onChange={handleSettingChange} className="w-full px-5 py-4 bg-gray-50 rounded-2xl focus:ring-2 focus:ring-purple-500 outline-none transition-all font-bold" />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-3">서비스 2</label>
+                    <input name="service2" value={settings.service2} onChange={handleSettingChange} className="w-full px-5 py-4 bg-gray-50 rounded-2xl focus:ring-2 focus:ring-purple-500 outline-none transition-all font-bold" />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-3">서비스 3</label>
+                    <input name="service3" value={settings.service3} onChange={handleSettingChange} className="w-full px-5 py-4 bg-gray-50 rounded-2xl focus:ring-2 focus:ring-purple-500 outline-none transition-all font-bold" />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-3">서비스 4</label>
+                    <input name="service4" value={settings.service4} onChange={handleSettingChange} className="w-full px-5 py-4 bg-gray-50 rounded-2xl focus:ring-2 focus:ring-purple-500 outline-none transition-all font-bold" />
+                  </div>
                 </div>
-              </div>
-              <div className="pt-10 border-t border-gray-100 flex justify-end">
-                <button onClick={() => alert('설정이 저장되었습니다.')} className="px-10 py-4 bg-purple-600 text-white font-black rounded-2xl hover:bg-purple-700 transition-all shadow-xl shadow-purple-100">
+              </section>
+              
+              <div className="pt-10 border-t border-gray-100 flex justify-end sticky bottom-0 bg-white/80 backdrop-blur-md py-4">
+                <button onClick={() => alert('설정이 저장되었습니다.')} className="px-10 py-5 bg-purple-600 text-white font-black rounded-2xl hover:bg-purple-700 transition-all shadow-xl shadow-purple-100 transform active:scale-95">
                   설정 저장하기
                 </button>
               </div>
