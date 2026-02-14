@@ -26,11 +26,14 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
   };
 
   /**
-   * 프로젝트 관리 로직
+   * [프로젝트 관리]
    */
   const deleteProject = (e: React.MouseEvent, id: string) => {
+    // 1. 이벤트 전파 방지: 부모 요소나 다른 버튼으로 클릭이 전달되지 않게 함
     e.stopPropagation();
     e.preventDefault();
+
+    // 2. 삭제 확인창
     if (window.confirm('정말 이 프로젝트를 삭제하시겠습니까?')) {
       setProjects(prev => prev.filter(p => p.id !== id));
       if (editingProject?.id === id) setEditingProject(null);
@@ -38,8 +41,11 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
   };
 
   const editProject = (e: React.MouseEvent, project: Project) => {
+    // 1. 이벤트 전파 방지
     e.stopPropagation();
     e.preventDefault();
+
+    // 2. 편집 모드 활성화 (데이터 복사)
     setEditingProject({ ...project });
   };
 
@@ -61,11 +67,22 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
     if (!editingProject) return;
     setProjects(prev => prev.map(p => p.id === editingProject.id ? editingProject : p));
     setEditingProject(null);
-    alert('프로젝트가 저장되었습니다.');
+    alert('저장되었습니다.');
+  };
+
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file && editingProject) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setEditingProject({ ...editingProject, image: reader.result as string });
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   /**
-   * 공지사항 관리 로직
+   * [공지사항 관리]
    */
   const handleEditNewsStart = (e: React.MouseEvent, item: NewsItem) => {
     e.stopPropagation();
@@ -82,7 +99,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
   const startAddNews = () => {
     const newItem: NewsItem = {
-      id: Date.now().toString(),
+      id: "new-" + Date.now().toString(),
       title: "",
       date: new Date().toISOString().split('T')[0],
       content: "",
@@ -95,14 +112,14 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
     e.preventDefault();
     if (!editingNews) return;
 
-    const exists = news.find(n => n.id === editingNews.id);
-    if (exists) {
-      setNews(prev => prev.map(n => n.id === editingNews.id ? editingNews : n));
+    if (editingNews.id.startsWith('new-')) {
+      const finalItem = { ...editingNews, id: Date.now().toString() };
+      setNews(prev => [finalItem, ...prev]);
     } else {
-      setNews(prev => [editingNews, ...prev]);
+      setNews(prev => prev.map(n => n.id === editingNews.id ? editingNews : n));
     }
     setEditingNews(null);
-    alert('공지사항이 저장되었습니다.');
+    alert('저장되었습니다.');
   };
 
   const handleNewsFieldChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -119,20 +136,10 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
     }
   };
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file && editingProject) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setEditingProject({ ...editingProject, image: reader.result as string });
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
   return (
     <div className="bg-gray-100 min-h-screen text-gray-900">
-      <div className="bg-white border-b border-gray-200 sticky top-0 z-50">
+      {/* Top Header */}
+      <div className="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 h-20 flex justify-between items-center">
           <div className="flex items-center gap-4">
             <span className="bg-purple-600 text-white px-3 py-1 rounded text-xs font-bold tracking-tighter">ADMIN</span>
@@ -151,6 +158,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
       </div>
 
       <div className="max-w-7xl mx-auto px-4 py-8 flex flex-col md:flex-row gap-8">
+        {/* Navigation Sidebar */}
         <div className="w-full md:w-64 flex-shrink-0 space-y-2">
           {[
             { id: 'settings', label: '사이트 기본 설정', icon: 'M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z' },
@@ -176,6 +184,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
           ))}
         </div>
 
+        {/* Main Content Area */}
         <div className="flex-grow bg-white rounded-[2.5rem] p-8 md:p-12 shadow-sm min-h-[600px]">
           {activeTab === 'settings' && (
             <div className="space-y-8 animate-in fade-in slide-in-from-right-4">
@@ -199,7 +208,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 </div>
               </div>
               <div className="pt-10 border-t border-gray-100 flex justify-end">
-                <button onClick={() => alert('저장되었습니다.')} className="px-10 py-4 bg-purple-600 text-white font-black rounded-2xl hover:bg-purple-700 transition-all shadow-xl shadow-purple-100">
+                <button onClick={() => alert('설정이 저장되었습니다.')} className="px-10 py-4 bg-purple-600 text-white font-black rounded-2xl hover:bg-purple-700 transition-all shadow-xl shadow-purple-100">
                   설정 저장하기
                 </button>
               </div>
@@ -219,7 +228,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
                       <div className="text-center py-24 text-gray-400 font-bold border-2 border-dashed border-gray-100 rounded-3xl">등록된 프로젝트가 없습니다.</div>
                     ) : (
                       projects.map(p => (
-                        <div key={p.id} className="flex items-center gap-6 p-5 border border-gray-100 rounded-3xl hover:bg-gray-50 transition-all group">
+                        <div key={p.id} className="flex items-center gap-6 p-5 border border-gray-100 rounded-3xl hover:bg-gray-50 transition-all group relative">
                           <div className="w-20 h-20 rounded-2xl overflow-hidden flex-shrink-0 bg-gray-100">
                             <img src={p.image} className="w-full h-full object-cover" alt="" />
                           </div>
@@ -228,12 +237,22 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
                             <p className="text-sm font-bold text-gray-400 uppercase tracking-wider">{p.category} | {p.date}</p>
                           </div>
                           <div className="flex gap-2">
-                            <button type="button" onClick={(e) => editProject(e, p)} className="p-4 text-gray-400 hover:text-purple-600 transition-all bg-white rounded-2xl shadow-sm border border-gray-100 hover:border-purple-200" title="수정">
+                            <button 
+                              type="button" 
+                              onClick={(e) => editProject(e, p)} 
+                              className="p-4 text-gray-400 hover:text-purple-600 transition-all bg-white rounded-2xl shadow-sm border border-gray-100 hover:border-purple-200" 
+                              title="수정"
+                            >
                               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                               </svg>
                             </button>
-                            <button type="button" onClick={(e) => deleteProject(e, p.id)} className="p-4 text-gray-400 hover:text-red-600 transition-all bg-white rounded-2xl shadow-sm border border-gray-100 hover:border-red-200" title="삭제">
+                            <button 
+                              type="button" 
+                              onClick={(e) => deleteProject(e, p.id)} 
+                              className="p-4 text-gray-400 hover:text-red-600 transition-all bg-white rounded-2xl shadow-sm border border-gray-100 hover:border-red-200" 
+                              title="삭제"
+                            >
                               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                               </svg>
@@ -278,8 +297,19 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
                             <button type="button" onClick={() => fileInputRef.current?.click()} className="px-6 py-3 bg-purple-600 text-white text-sm font-black rounded-xl hover:bg-purple-700 transition-all shadow-lg whitespace-nowrap">파일 업로드</button>
                             <input type="file" ref={fileInputRef} onChange={handleImageUpload} className="hidden" accept="image/*" />
                           </div>
+                          <div className="aspect-video w-full rounded-3xl overflow-hidden bg-gray-50 border-2 border-dashed border-gray-200 flex items-center justify-center">
+                            {editingProject.image ? (
+                              <img src={editingProject.image} alt="Preview" className="w-full h-full object-cover" />
+                            ) : (
+                              <span className="text-gray-300 font-bold">미리보기 이미지가 없습니다</span>
+                            )}
+                          </div>
                         </div>
                       </div>
+                    </div>
+                    <div>
+                      <label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-3">상세 설명</label>
+                      <textarea name="description" rows={5} value={editingProject.description} onChange={(e) => setEditingProject({...editingProject, description: e.target.value})} className="w-full px-5 py-4 bg-gray-50 rounded-2xl focus:ring-2 focus:ring-purple-500 outline-none transition-all font-bold resize-none" placeholder="설명을 입력하세요" />
                     </div>
                     <div className="flex justify-end gap-4 pt-6">
                       <button type="button" onClick={() => setEditingProject(null)} className="px-8 py-4 bg-gray-100 text-gray-500 font-black rounded-2xl hover:bg-gray-200 transition-all">취소하기</button>
@@ -320,7 +350,13 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
                             <td className="px-6 py-5 font-bold text-gray-900 group-hover:text-purple-600 transition-colors">{n.title}</td>
                             <td className="px-6 py-5 text-sm font-bold text-gray-400">{n.date}</td>
                             <td className="px-6 py-5 text-right">
-                              <button type="button" onClick={(e) => deleteNews(e as any, n.id)} className="text-red-500 hover:text-red-700 transition-colors text-sm font-black underline decoration-dotted underline-offset-4">삭제</button>
+                              <button 
+                                type="button" 
+                                onClick={(e) => deleteNews(e as any, n.id)} 
+                                className="text-red-500 hover:text-red-700 transition-colors text-sm font-black underline decoration-dotted underline-offset-4"
+                              >
+                                삭제
+                              </button>
                             </td>
                           </tr>
                         ))}
@@ -336,7 +372,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                       </svg>
                     </button>
-                    <h2 className="text-3xl font-black tracking-tight">{editingNews.id.length > 15 ? '새 공지사항 작성' : '공지사항 수정'}</h2>
+                    <h2 className="text-3xl font-black tracking-tight">{editingNews.id.startsWith('new-') ? '새 공지사항 작성' : '공지사항 수정'}</h2>
                   </div>
 
                   <form onSubmit={handleNewsSave} className="space-y-8">
