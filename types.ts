@@ -25,6 +25,8 @@ export interface SiteSettings {
   contactEmail: string;
   contactPhone: string;
   address: string;
+  footerDescription: string;
+  footerServices: string;
 }
 
 export interface AppState {

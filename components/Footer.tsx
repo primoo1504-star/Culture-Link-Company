@@ -7,6 +7,11 @@ interface FooterProps {
 }
 
 const Footer: React.FC<FooterProps> = ({ settings }) => {
+  // Split the services string by comma and trim each item
+  const servicesList = settings.footerServices 
+    ? settings.footerServices.split(',').map(s => s.trim()).filter(s => s !== '')
+    : [];
+
   return (
     <footer className="bg-gray-50 pt-16 pb-8 border-t border-gray-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -14,7 +19,7 @@ const Footer: React.FC<FooterProps> = ({ settings }) => {
           <div className="col-span-1 md:col-span-2">
             <h3 className="text-xl font-bold text-gray-900 mb-4">{settings.companyName}</h3>
             <p className="text-gray-500 max-w-sm mb-6 leading-relaxed">
-              문화예술의 가치를 발견하고, 이를 현대적인 감각으로 이어주는 기획 전문가 그룹입니다.
+              {settings.footerDescription}
             </p>
             <div className="flex space-x-4">
               {['Instagram', 'YouTube', 'Facebook'].map(social => (
@@ -38,16 +43,24 @@ const Footer: React.FC<FooterProps> = ({ settings }) => {
           <div>
             <h4 className="text-sm font-bold text-gray-900 uppercase tracking-widest mb-6">Service</h4>
             <ul className="space-y-4 text-sm text-gray-600">
-              <li>축제 기획</li>
-              <li>전시 및 큐레이션</li>
-              <li>공연 제작</li>
-              <li>문화 컨설팅</li>
+              {servicesList.length > 0 ? (
+                servicesList.map((service, index) => (
+                  <li key={index}>{service}</li>
+                ))
+              ) : (
+                <>
+                  <li>축제 기획</li>
+                  <li>전시 및 큐레이션</li>
+                  <li>공연 제작</li>
+                  <li>문화 컨설팅</li>
+                </>
+              )}
             </ul>
           </div>
         </div>
         <div className="border-t border-gray-200 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-xs text-gray-400">
-            © 2024 {settings.companyName}. All Rights Reserved.
+            © {new Date().getFullYear()} {settings.companyName}. All Rights Reserved.
           </p>
           <div className="flex gap-6 text-xs text-gray-400">
             <a href="#" className="hover:text-purple-600">개인정보처리방침</a>

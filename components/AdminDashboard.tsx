@@ -110,17 +110,36 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
                   <label className="block text-sm font-bold text-gray-700 mb-2">이메일</label>
                   <input name="contactEmail" value={settings.contactEmail} onChange={handleSettingChange} className="w-full px-4 py-3 bg-gray-50 rounded-xl focus:ring-2 focus:ring-purple-500 outline-none" />
                 </div>
+                <div>
+                  <label className="block text-sm font-bold text-gray-700 mb-2">연락처</label>
+                  <input name="contactPhone" value={settings.contactPhone} onChange={handleSettingChange} className="w-full px-4 py-3 bg-gray-50 rounded-xl focus:ring-2 focus:ring-purple-500 outline-none" />
+                </div>
+                <div>
+                  <label className="block text-sm font-bold text-gray-700 mb-2">주소</label>
+                  <input name="address" value={settings.address} onChange={handleSettingChange} className="w-full px-4 py-3 bg-gray-50 rounded-xl focus:ring-2 focus:ring-purple-500 outline-none" />
+                </div>
               </div>
               <div>
                 <label className="block text-sm font-bold text-gray-700 mb-2">메인 히어로 타이틀</label>
                 <textarea name="heroTitle" rows={2} value={settings.heroTitle} onChange={handleSettingChange} className="w-full px-4 py-3 bg-gray-50 rounded-xl focus:ring-2 focus:ring-purple-500 outline-none" />
               </div>
-              <div>
-                <label className="block text-sm font-bold text-gray-700 mb-2">비전 설명</label>
-                <textarea name="aboutVision" rows={4} value={settings.aboutVision} onChange={handleSettingChange} className="w-full px-4 py-3 bg-gray-50 rounded-xl focus:ring-2 focus:ring-purple-500 outline-none" />
+              
+              <div className="pt-8 border-t border-gray-100">
+                <h3 className="text-lg font-bold mb-4">푸터(Footer) 설정</h3>
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-bold text-gray-700 mb-2">푸터 회사 설명</label>
+                    <textarea name="footerDescription" rows={2} value={settings.footerDescription} onChange={handleSettingChange} className="w-full px-4 py-3 bg-gray-50 rounded-xl focus:ring-2 focus:ring-purple-500 outline-none" />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-bold text-gray-700 mb-2">제공 서비스 목록 (쉼표로 구분)</label>
+                    <input name="footerServices" value={settings.footerServices} onChange={handleSettingChange} className="w-full px-4 py-3 bg-gray-50 rounded-xl focus:ring-2 focus:ring-purple-500 outline-none" placeholder="축제 기획, 전시 기획, 공연 제작..." />
+                  </div>
+                </div>
               </div>
+
               <div className="pt-6 border-t border-gray-100 flex justify-end">
-                <button className="px-8 py-3 bg-purple-600 text-white font-bold rounded-xl hover:bg-purple-700 transition-all">설정 저장하기</button>
+                <button className="px-8 py-3 bg-purple-600 text-white font-bold rounded-xl hover:bg-purple-700 transition-all shadow-lg">설정 저장하기</button>
               </div>
             </div>
           )}

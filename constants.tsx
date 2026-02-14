@@ -10,7 +10,9 @@ export const INITIAL_SETTINGS: SiteSettings = {
   aboutHistory: "2018년 설립 이후, 매년 50회 이상의 문화 예술 프로그램을 기획 및 운영하며 지역 문화 활성화에 기여하고 있습니다.",
   contactEmail: "contact@munhwaieum.com",
   contactPhone: "02-123-4567",
-  address: "서울특별시 강남구 테헤란로 123, 아트타워 8층"
+  address: "서울특별시 강남구 테헤란로 123, 아트타워 8층",
+  footerDescription: "문화예술의 가치를 발견하고, 이를 현대적인 감각으로 이어주는 기획 전문가 그룹입니다.",
+  footerServices: "축제 기획, 전시 및 큐레이션, 공연 제작, 문화 컨설팅"
 };
 
 export const INITIAL_PROJECTS: Project[] = [
