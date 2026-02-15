@@ -195,7 +195,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
                   </div>
                   <div>
                     <label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-3">사업자 등록 번호</label>
-                    <input name="businessNumber" value={settings.businessNumber} onChange={handleSettingChange} className="w-full px-5 py-4 bg-gray-50 rounded-2xl focus:ring-2 focus:ring-purple-500 outline-none transition-all font-bold" />
+                    <input name="businessNumber" value={settings.businessNumber} onChange={handleSettingChange} placeholder="000-00-00000" className="w-full px-5 py-4 bg-gray-50 rounded-2xl focus:ring-2 focus:ring-purple-500 outline-none transition-all font-bold" />
                   </div>
                 </div>
               </section>
@@ -228,15 +228,15 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
                     <div>
                       <label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-3">Instagram URL</label>
-                      <input name="snsInstagram" value={settings.snsInstagram} onChange={handleSettingChange} placeholder="https://" className="w-full px-5 py-4 bg-gray-50 rounded-2xl focus:ring-2 focus:ring-purple-500 outline-none transition-all font-bold" />
+                      <input name="snsInstagram" value={settings.snsInstagram} onChange={handleSettingChange} placeholder="https://instagram.com/..." className="w-full px-5 py-4 bg-gray-50 rounded-2xl focus:ring-2 focus:ring-purple-500 outline-none transition-all font-bold" />
                     </div>
                     <div>
                       <label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-3">Youtube URL</label>
-                      <input name="snsYoutube" value={settings.snsYoutube} onChange={handleSettingChange} placeholder="https://" className="w-full px-5 py-4 bg-gray-50 rounded-2xl focus:ring-2 focus:ring-purple-500 outline-none transition-all font-bold" />
+                      <input name="snsYoutube" value={settings.snsYoutube} onChange={handleSettingChange} placeholder="https://youtube.com/..." className="w-full px-5 py-4 bg-gray-50 rounded-2xl focus:ring-2 focus:ring-purple-500 outline-none transition-all font-bold" />
                     </div>
                     <div>
                       <label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-3">Facebook URL</label>
-                      <input name="snsFacebook" value={settings.snsFacebook} onChange={handleSettingChange} placeholder="https://" className="w-full px-5 py-4 bg-gray-50 rounded-2xl focus:ring-2 focus:ring-purple-500 outline-none transition-all font-bold" />
+                      <input name="snsFacebook" value={settings.snsFacebook} onChange={handleSettingChange} placeholder="https://facebook.com/..." className="w-full px-5 py-4 bg-gray-50 rounded-2xl focus:ring-2 focus:ring-purple-500 outline-none transition-all font-bold" />
                     </div>
                   </div>
                 </div>
@@ -265,7 +265,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
               </section>
               
               <div className="pt-10 border-t border-gray-100 flex justify-end sticky bottom-0 bg-white/80 backdrop-blur-md py-4">
-                <button onClick={() => alert('설정이 저장되었습니다.')} className="px-10 py-5 bg-purple-600 text-white font-black rounded-2xl hover:bg-purple-700 transition-all shadow-xl shadow-purple-100 transform active:scale-95">
+                <button onClick={() => alert('모든 설정이 성공적으로 저장되었습니다.')} className="px-10 py-5 bg-purple-600 text-white font-black rounded-2xl hover:bg-purple-700 transition-all shadow-xl shadow-purple-100 transform active:scale-95">
                   설정 저장하기
                 </button>
               </div>
