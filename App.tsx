@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Project, NewsItem, SiteSettings } from './types.ts';
 import { INITIAL_PROJECTS, INITIAL_NEWS, INITIAL_SETTINGS } from './constants.tsx';
 import Navbar from './components/Navbar.tsx';
@@ -13,10 +13,36 @@ import AdminDashboard from './components/AdminDashboard.tsx';
 
 const App: React.FC = () => {
   const [currentPage, setCurrentPage] = useState<string>('home');
-  const [projects, setProjects] = useState<Project[]>(INITIAL_PROJECTS);
-  const [news, setNews] = useState<NewsItem[]>(INITIAL_NEWS);
-  const [settings, setSettings] = useState<SiteSettings>(INITIAL_SETTINGS);
   const [isAdminMode, setIsAdminMode] = useState<boolean>(false);
+
+  // 초기 상태 로드 (localStorage 우선)
+  const [projects, setProjects] = useState<Project[]>(() => {
+    const saved = localStorage.getItem('ieum_projects');
+    return saved ? JSON.parse(saved) : INITIAL_PROJECTS;
+  });
+  
+  const [news, setNews] = useState<NewsItem[]>(() => {
+    const saved = localStorage.getItem('ieum_news');
+    return saved ? JSON.parse(saved) : INITIAL_NEWS;
+  });
+  
+  const [settings, setSettings] = useState<SiteSettings>(() => {
+    const saved = localStorage.getItem('ieum_settings');
+    return saved ? JSON.parse(saved) : INITIAL_SETTINGS;
+  });
+
+  // 데이터 변경 시 localStorage 동기화
+  useEffect(() => {
+    localStorage.setItem('ieum_projects', JSON.stringify(projects));
+  }, [projects]);
+
+  useEffect(() => {
+    localStorage.setItem('ieum_news', JSON.stringify(news));
+  }, [news]);
+
+  useEffect(() => {
+    localStorage.setItem('ieum_settings', JSON.stringify(settings));
+  }, [settings]);
 
   // Simple "Router"
   const renderPage = () => {

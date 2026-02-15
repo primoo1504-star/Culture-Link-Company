@@ -24,13 +24,14 @@ export const INITIAL_SETTINGS: SiteSettings = {
   service4: "문화 컨설팅"
 };
 
+// 고정된 이미지 URL을 사용하여 랜덤성 제거
 export const INITIAL_PROJECTS: Project[] = [
   {
     id: "1",
     title: "2024 전통문화 페스티벌 '이음'",
     category: "축제 기획",
     date: "2024.10",
-    image: "https://picsum.photos/800/600?random=1",
+    image: "https://images.unsplash.com/photo-1514525253361-bee8718a340b?q=80&w=1000&auto=format&fit=crop",
     description: "전통 예술의 현대적 재해석을 주제로 한 대규모 야외 축제"
   },
   {
@@ -38,7 +39,7 @@ export const INITIAL_PROJECTS: Project[] = [
     title: "현대미술 작가 10인 초대전",
     category: "전시 기획",
     date: "2024.08",
-    image: "https://picsum.photos/800/600?random=2",
+    image: "https://images.unsplash.com/photo-1460661419201-fd4cecdf8a8b?q=80&w=1000&auto=format&fit=crop",
     description: "차세대 미디어 아티스트들의 협업 전시회"
   },
   {
@@ -46,7 +47,7 @@ export const INITIAL_PROJECTS: Project[] = [
     title: "찾아가는 문화나눔 '예술배달'",
     category: "공공 예술",
     date: "2024.06",
-    image: "https://picsum.photos/800/600?random=3",
+    image: "https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?q=80&w=1000&auto=format&fit=crop",
     description: "문화 소외 계층을 위한 릴레이 음악 공연 프로젝트"
   }
 ];
@@ -67,3 +68,5 @@ export const INITIAL_NEWS: NewsItem[] = [
     isImportant: false
   }
 ];
+
+export const DEFAULT_PLACEHOLDER_IMAGE = "https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=80&w=2070&auto=format&fit=crop";

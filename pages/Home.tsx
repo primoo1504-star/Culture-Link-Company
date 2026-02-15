@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { Project, SiteSettings } from '../types';
+import { DEFAULT_PLACEHOLDER_IMAGE } from '../constants.tsx';
 
 interface HomeProps {
   settings: SiteSettings;
@@ -102,7 +103,7 @@ const Home: React.FC<HomeProps> = ({ settings, projects, setPage }) => {
               >
                 <div className="relative overflow-hidden aspect-[4/5] rounded-[2.5rem] mb-8 shadow-2xl shadow-gray-200 transition-all group-hover:-translate-y-4">
                   <img 
-                    src={project.image} 
+                    src={project.image || DEFAULT_PLACEHOLDER_IMAGE} 
                     alt={project.title}
                     className="object-cover w-full h-full transition-transform duration-1000 group-hover:scale-110"
                   />

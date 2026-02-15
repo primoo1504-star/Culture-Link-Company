@@ -1,6 +1,7 @@
 
 import React, { useState, useRef } from 'react';
 import { Project, NewsItem, SiteSettings } from '../types.ts';
+import { DEFAULT_PLACEHOLDER_IMAGE } from '../constants.tsx';
 
 interface AdminDashboardProps {
   projects: Project[];
@@ -49,7 +50,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
       title: "새 프로젝트",
       category: "카테고리",
       date: new Date().toISOString().split('T')[0].slice(0, 7).replace('-', '.'),
-      image: "https://picsum.photos/800/600?random=" + Math.random(),
+      image: DEFAULT_PLACEHOLDER_IMAGE, // 랜덤 이미지 대신 기본 플레이스홀더 사용
       description: ""
     };
     setProjects(prev => [newProj, ...prev]);
@@ -287,7 +288,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
                       projects.map(p => (
                         <div key={p.id} className="flex items-center gap-6 p-5 border border-gray-100 rounded-3xl hover:bg-gray-50 transition-all group relative">
                           <div className="w-20 h-20 rounded-2xl overflow-hidden flex-shrink-0 bg-gray-100">
-                            <img src={p.image} className="w-full h-full object-cover" alt="" />
+                            <img src={p.image || DEFAULT_PLACEHOLDER_IMAGE} className="w-full h-full object-cover" alt="" />
                           </div>
                           <div className="flex-grow">
                             <h4 className="font-black text-lg text-gray-900 leading-tight mb-1">{p.title}</h4>

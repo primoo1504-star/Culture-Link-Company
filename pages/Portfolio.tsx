@@ -1,6 +1,7 @@
 
 import React, { useState } from 'react';
 import { Project } from '../types';
+import { DEFAULT_PLACEHOLDER_IMAGE } from '../constants.tsx';
 
 interface PortfolioProps {
   projects: Project[];
@@ -19,7 +20,7 @@ const Portfolio: React.FC<PortfolioProps> = ({ projects }) => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <h1 className="text-5xl font-black text-gray-900 mb-6">포트폴리오</h1>
-          <p className="text-gray-500 text-lg">문황이음컴퍼니가 걸어온 창의적인 여정들을 확인해보세요.</p>
+          <p className="text-gray-500 text-lg">문화이음컴퍼니가 걸어온 창의적인 여정들을 확인해보세요.</p>
         </div>
 
         {/* Filters */}
@@ -45,7 +46,7 @@ const Portfolio: React.FC<PortfolioProps> = ({ projects }) => {
             <div key={project.id} className="group animate-in zoom-in-95 duration-500">
               <div className="relative overflow-hidden rounded-[2rem] shadow-xl mb-6 aspect-square">
                 <img 
-                  src={project.image} 
+                  src={project.image || DEFAULT_PLACEHOLDER_IMAGE} 
                   alt={project.title}
                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                 />
